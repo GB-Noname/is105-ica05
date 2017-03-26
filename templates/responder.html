@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Responder page</title>
+
+</head>
+<body>
+<useBean id="mybean" scope="session" class="server.go"/>
+<setProperty name="mybean" property="name" />
+<center><h1><getProperty name="mybean" property="name" /></h1></center>
+</body>
+</html>
