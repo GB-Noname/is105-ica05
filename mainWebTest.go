@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/http"
 	"path"
+	"encoding/json"
 )
 
 type Profile struct {
@@ -12,8 +13,9 @@ type Profile struct {
 }
 
 func main() {
-	http.HandleFunc("/", foo)
-	http.ListenAndServe(":3000", nil)
+	go http.HandleFunc("/", foo)
+	http.ListenAndServe(":8001", nil)
+	//http.HandleFunc("/", foo2)
 }
 
 func foo(w http.ResponseWriter, r *http.Request) {
@@ -32,4 +34,17 @@ func foo(w http.ResponseWriter, r *http.Request) {
 	if err := tmpl.Execute(w, profile); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+func foo2(w http.ResponseWriter, r *http.Request) {
+	profile := Profile{"Alex", []string{"snowboarding", "programming"}}
+
+	js, err := json.Marshal(profile)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	w.Write(js)
 }
