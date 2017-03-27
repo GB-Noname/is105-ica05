@@ -1,29 +1,18 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-<head>
-    <meta charset="UTF-8">
-    <title>Main Index site for test</title>
-    <%--
-    Document   : FullApp
-    Created on : Feb 23, 2017, 1:36:52 AM
-    Author     : Tor Borgen <Tor Borgen at CastleDev>
-    --%>
+{{ define "title" }}An example layout{{ end }}
 
-    <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
-<body>
+{{ define "content" }}
 <useBean id="mybean2" scope="session" class="WebInput.Input"/>
 <h2><getProperty name="mybean2" property="help" /></h2>
-<center><form name="loginForm" method="post" action="InputHandler">
-    Username: <input type="text" name="name"/> <br/>
+<center><form name="loginForm" method="post" action="/search">
+    ENTRY: <input type="text" name="name"> <br/>
     <input type="submit" name="Search" value="Search" /></center>
 <br>
 </form>
 
-<form action="${pageContext.request.contextPath}/InputHandler" method="post">
-    <center><input type="submit" name="Commands" value="Text Input Commands" />
-        <input type="submit" name="Leaderboard" value="Leaderboard" />
-        <input type="submit" name="Gamers" value="Registered Gamers" />
+<form action="/AltSubmit" method="post">
+    <center><input type="submit" name="List" value="List all JSON results" />
+        <input type="submit" name="ShowProg" value="Show current progress" />
+        <input type="submit" name="ShowCode" value="Show code in raw format" />
     </center>
 </form>
 
@@ -31,20 +20,20 @@
     <br>
     <div id="asd">
         <form action="InputHandler" method="post">
-            Enter gamer name <input type="text" name="gamerTag" />
-            Enter a description of the gamer <input type="text" name="gamerDesc" />
+            Enter gamer name <input type="text" name="JSON Link" />
+            Enter a description of the gamer <input type="text" name="Name" />
             <br>
-            Enter the rank type <input type="text" name="rankType" />
-            Enter rank points <input type="number" name="rankPoints" min="0" step="1"/>
+            Enter the rank type <input type="text" name="Section" />
+            Enter rank points <input type="number" name="Amount" min="0" step="1"/>
             <br>
-            <input type="submit" name="AddGamer" value="Submit new gamer" />
+            <input type="submit" name="AddIt" value="Submit request" />
 
         </form>
         <br>
         <button onclick="asd(1)">Close without submitting</button>
     </div>
 
-    <button onclick="asd(2)">Add new Gamer</button>
+    <button onclick="asd(2)">Special request</button>
 
     <script type="text/javascript">
         function asd(a)
@@ -58,11 +47,4 @@
     </script>
 </center>
 
-</body>
-</html>
-
-</head>
-<body>
-
-</body>
-</html>
+{{ end }}
