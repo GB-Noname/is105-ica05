@@ -18,6 +18,7 @@ import (
 var URLS = map[string]string{
 	"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
 	"Google" : "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+	"Population" : "http://api.population.io:80/1.0/population/2016/Norway/",
 
 }
 var IPaddr string
@@ -32,6 +33,7 @@ func main() {
 	http.HandleFunc("/", homepage)
 	http.HandleFunc("/search", searchBox)
 	http.HandleFunc("/AltSubmit", formInputHandler)
+
 	//http.HandleFunc("/ttt", searchBox)
 	//http.HandleFunc("/ddd", searchBox)
 	//http.HandleFunc("/fff", searchBox)
@@ -87,8 +89,10 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			} else if key == "OWL" {
 				i := URLS[key]
 				go doGet(i)
+			} else if key == "Population" {
+				i := URLS[key]
+				go doGet(i)
 			}
-
 		}
 
 	}
