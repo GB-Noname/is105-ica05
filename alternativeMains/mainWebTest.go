@@ -6,7 +6,7 @@ import (
 	"path"
 
 	"fmt"
-	"./decoders"
+	"../decoders"
 	"log"
 	"io/ioutil"
 
