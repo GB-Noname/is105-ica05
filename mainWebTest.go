@@ -56,19 +56,21 @@ func GetLocalIP() string {
 
 func homepage(w http.ResponseWriter, r *http.Request) {
 
-
 	lp := path.Join("templates", "layout.html")
 	fp := path.Join("templates", "indexTest.html")
 
 	// Note that the layout file must be the first parameter in ParseFiles
-	_, err := template.ParseFiles(lp, fp)
+	tmpl, err := template.ParseFiles(lp, fp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-
+	if err := tmpl.Execute(w, "test"); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
+
 func searchBox(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() //Parse url parameters passed, then parse the response packet for the POST body (request body)
 	// attention: If you do not call ParseForm method, the following data can not be obtained form
