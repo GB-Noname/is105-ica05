@@ -8,23 +8,13 @@ import (
 	"log"
 )
 
-//func PopulationTables
-type PopulationTables struct {
-	Tables [4]PopulationTable
+type athena struct {
+	Label     string
+	Display   string
+	IsMeasure bool
 }
 
-type PopulationTable struct {
-	Total   float64
-	Females float64
-	Males   float64
-	Year    float64
-	//Age					float64
-
-	//type something struct {
-
-}
-
-func DecodePopulation(test []byte) {
+func DecodeAthena(test []byte) {
 	//fmt.Printf("q", test)
 	// Her brukes det kun et utdrag fra data som var i responsen fra OWL
 	// For å bruke strøm fra doGet funksjonen, må hele JSON-strukturen
@@ -42,14 +32,14 @@ func DecodePopulation(test []byte) {
 		// Definerer struktur for en instans av Weather strukturen
 		// Dette avhenger selvfølgelig om hva som returneres fra
 		// webtjenesten (openweather i dette tilfelle)
-		var p PopulationTable
+		var a athena
 		//var m Measurements
 		// Passerer adressen til Weather-strukturen w til funksjonen
 		// Decode (som kalles fra en json.NewDecoder med
 		// strings.NewReader(jsonStream) som IN-DATA-STRØM
 		// Når det ikke er mer data (EOF) bryter vi utførelsen av
 		// denne funksjonen med break
-		if err := dec.Decode(&p); err == io.EOF {
+		if err := dec.Decode(&a); err == io.EOF {
 			break
 		} else if err != nil {
 			log.Fatal(err)
@@ -58,8 +48,8 @@ func DecodePopulation(test []byte) {
 		// data fra denne webtjenesten på en brukbar måte
 		// Dette er noe dere skal prøve å imitere med data
 		// fra andre webtjenester (med andre API-er, selvsagt)
-		fmt.Println("\n Resultat: \n",
-			p.Total, p.Females, p.Males, p.Year)
+		fmt.Println("\n Ting: \n",
+			a.Label, a.Display, a.IsMeasure)
 
 	}
 }

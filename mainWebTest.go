@@ -19,7 +19,8 @@ import (
 var URLS = map[string]string{
 	"OWL":        "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
 	"Google":     "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
-	"Population": "http://api.population.io/#!/population/2016/Norway",
+	"Population": "http://api.population.io:80/1.0/population/2016/Norway/",
+	"athena":     "http://apps.who.int/gho/athena/api/?format=json",
 }
 var IPaddr string
 
@@ -91,12 +92,14 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			} else if key == "Population" {
 				i := URLS[key]
 				go doGet(i)
-
+			} else if key == "athena" {
+				i := URLS[key]
+				go doGet(i)
 			}
-
 		}
 	}
 }
+
 func doGet(url string) {
 	response, err := http.Get(url)
 	if err != nil {
@@ -124,6 +127,8 @@ func doGet(url string) {
 
 		} else if url == URLS["OWL"] {
 			decoders.DecodeOWL(contents)
+		} else if url == URLS["athena"] {
+			decoders.DecodeAthena(contents)
 		}
 	}
 }
