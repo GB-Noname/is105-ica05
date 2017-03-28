@@ -8,28 +8,22 @@ import (
 	"log"
 )
 
-type Profile struct {
-	Name    string
-	Hobbies []string
+//PopulationTable{
+//tables(array[PopulationTable])
+
+//}
+type PopulationTable struct {
+	Total   float64
+	Females float64
+	Males   float64
+	Year    float64
+	//Age					float64
+
+	//type something struct {
+
 }
 
-type Coordinates struct {
-	Lon float64
-	Lat float64
-}
-type Measurements struct {
-	Temp     float64
-	Pressure float64
-	Humidity float64
-	Temp_min float64
-	Temp_max float64
-}
-type Weather struct {
-	Coord Coordinates
-	Main  Measurements
-}
-
-func DecodeOWL(test []byte) {
+func DecodePopulation(test []byte) {
 	//fmt.Printf("q", test)
 	// Her brukes det kun et utdrag fra data som var i responsen fra OWL
 	// For å bruke strøm fra doGet funksjonen, må hele JSON-strukturen
@@ -47,14 +41,14 @@ func DecodeOWL(test []byte) {
 		// Definerer struktur for en instans av Weather strukturen
 		// Dette avhenger selvfølgelig om hva som returneres fra
 		// webtjenesten (openweather i dette tilfelle)
-		var w Weather
+		var p PopulationTable
 		//var m Measurements
 		// Passerer adressen til Weather-strukturen w til funksjonen
 		// Decode (som kalles fra en json.NewDecoder med
 		// strings.NewReader(jsonStream) som IN-DATA-STRØM
 		// Når det ikke er mer data (EOF) bryter vi utførelsen av
 		// denne funksjonen med break
-		if err := dec.Decode(&w); err == io.EOF {
+		if err := dec.Decode(&p); err == io.EOF {
 			break
 		} else if err != nil {
 			log.Fatal(err)
@@ -63,11 +57,8 @@ func DecodeOWL(test []byte) {
 		// data fra denne webtjenesten på en brukbar måte
 		// Dette er noe dere skal prøve å imitere med data
 		// fra andre webtjenester (med andre API-er, selvsagt)
-		fmt.Printf("\n Coordinates are: longitude %.2f and latitude %.2f\n",
-			w.Coord.Lon, w.Coord.Lat)
-		fmt.Printf("Temperature: %.f\n", w.Main.Temp)
-		fmt.Printf("Lowest temperature: %.f\n", w.Main.Temp_min)
-		fmt.Printf("Peak temperature: %.f\n", w.Main.Temp_max)
+		fmt.Println("\n Resultat: \n",
+			p.Total, p.Females, p.Males, p.Year)
 
 	}
 }
