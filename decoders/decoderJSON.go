@@ -8,10 +8,6 @@ import (
 	"fmt"
 
 )
-type Profile struct {
-	Name    string
-	Hobbies []string
-}
 
 type Coordinates struct {
 	Lon float64
@@ -33,7 +29,7 @@ func DecodeOWL(test []byte) {
 	//fmt.Printf("q", test)
 	// Her brukes det kun et utdrag fra data som var i responsen fra OWL
 	// For å bruke strøm fra doGet funksjonen, må hele JSON-strukturen
-	// defineres; kun Coordinates og Measurements (main) er definert i
+	// defineres; kun Coordinates og Additional (main) er definert i
 	// dette eksemplet
 
 	// Definerer en struktur i Golang etter strukturen fra API-en (openweather)
@@ -48,7 +44,7 @@ func DecodeOWL(test []byte) {
 		// Dette avhenger selvfølgelig om hva som returneres fra
 		// webtjenesten (openweather i dette tilfelle)
 		var w Weather
-		//var m Measurements
+		//var m Additional
 		// Passerer adressen til Weather-strukturen w til funksjonen
 		// Decode (som kalles fra en json.NewDecoder med
 		// strings.NewReader(jsonStream) som IN-DATA-STRØM
