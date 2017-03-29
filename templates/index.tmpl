@@ -1,0 +1,22 @@
+<html>
+<head>
+
+</head>
+<body>
+<h2>Navn: {{.Name}}</h2>
+<p>Description: {{.Description}}</p>
+<p>Some other stuff: Serveren har vært oppe i: {{.Count}} sekunder</p>
+<p>Server IP : {{.ServerIP}}</p>
+<form action="/">
+    Søk google maps.. <input type="text" name="place" placeholder="UIA kristiansand">
+    <input type="submit" value="Søk!">
+</form>
+<iframe
+        width="100%"
+        height="70%"
+        frameborder="0" style="border:0"
+        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDxwGLdsYA1zvYqq_HzkoaLNLnr7uE4OII
+            &q={{.MapData}}" allowfullscreen>
+</iframe>
+</body>
+</html>

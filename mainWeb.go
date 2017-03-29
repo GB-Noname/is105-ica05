@@ -110,7 +110,7 @@ func doGet(url string) {
 			go decoders.DecodeOWL(contents)
 		}
 		if url == URLS["Gtimezone"] {
-			go decoders.DecodeGoogleMaps(contents)
+			go decoders.DecodeTimeZone(contents)
 		}
 		if url == URLS["IP"] {
 			IPaddr = decoders.DecodeIP(contents)

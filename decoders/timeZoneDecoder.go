@@ -22,7 +22,8 @@ type TimezoneResult struct {
 	TimeZoneName string `json:"timeZoneName"`
 }
 
-func DecodeGoogleMaps(test []byte) {
+var buffer bytes.Buffer
+func DecodeTimeZone(test []byte) string{
 	//fmt.Printf("q", test)
 	// Her brukes det kun et utdrag fra data som var i responsen fra OWL
 	// For å bruke strøm fra doGet funksjonen, må hele JSON-strukturen
@@ -55,15 +56,21 @@ func DecodeGoogleMaps(test []byte) {
 			log.Fatal(err)
 			fmt.Print("TWTTWTWTW")
 		}
-		fmt.Printf("\n Result is : %q", res.TimeZoneName)
-		fmt.Println(res.DstOffset)
-		fmt.Printf("\n Result is : %q", res.TimeZoneID)
-		fmt.Println(res.TimeZoneName)
-		fmt.Println(res.RawOffset)
+
+
+		buffer.WriteString("Timezone information: " + w.Reverse)
+
+		//fmt.Printf("\n You are in country: %q \n More specific %q in %q \n Your ISP is: %q\n",
+		//w.Country, w.City, w.RegionName, w.Isp)
+		buffer.WriteString("\n You are in the timezone: " + res.TimeZoneName + "\n" +
+		"With the TimeZoneId: " + res.TimeZoneID)
+		}
+		fmt.Println(buffer.String())
 		// Her er et par eksempler på hvordan man kan skrive ut
 		// data fra denne webtjenesten på en brukbar måte
 		// Dette er noe dere skal prøve å imitere med data
 		// fra andre webtjenester (med andre API-er, selvsagt)
-
+	return buffer.String()
 	}
-}
+
+
