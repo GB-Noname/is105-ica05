@@ -7,6 +7,7 @@ import (
 	"log"
 	"fmt"
 
+	"strconv"
 )
 
 type Coordinates struct {
@@ -25,7 +26,7 @@ type Weather struct {
 	Main Measurements
 }
 
-func DecodeOWL(test []byte) {
+func DecodeOWL(test []byte) string{
 	//fmt.Printf("q", test)
 	// Her brukes det kun et utdrag fra data som var i responsen fra OWL
 	// For å bruke strøm fra doGet funksjonen, må hele JSON-strukturen
@@ -36,7 +37,7 @@ func DecodeOWL(test []byte) {
 	// Her kan man virkelig se “styrken” av Golangs struct
 	// Datafelt i struct må være med en storbokstav og navn må tilsvare
 	// de navn som er i jsonStream (de kan begynne med små bokstaver)
-
+	var buffer bytes.Buffer
 	// Ting er strøm-basert, som vi har snakket om tidligere
 	dec := json.NewDecoder(bytes.NewReader(test))
 	for {
@@ -59,11 +60,17 @@ func DecodeOWL(test []byte) {
 		// data fra denne webtjenesten på en brukbar måte
 		// Dette er noe dere skal prøve å imitere med data
 		// fra andre webtjenester (med andre API-er, selvsagt)
-		fmt.Printf("\n Coordinates are: longitude %.2f and latitude %.2f\n",
-			w.Coord.Lon, w.Coord.Lat)
-		fmt.Printf("Temperature: %.f\n", w.Main.Temp)
-		fmt.Printf("Lowest temperature: %.f\n", w.Main.Temp_min)
-		fmt.Printf("Peak temperature: %.f\n", w.Main.Temp_max)
+
+		buffer.WriteString("\nCoordinates are: longitude " + strconv.FormatFloat(w.Coord.Lon,'f',2,64) )
+		buffer.WriteString(" and latitude " + strconv.FormatFloat(w.Coord.Lat,'f',2,64) )
+		buffer.WriteString("\nTemperature: \n" + strconv.FormatFloat(w.Main.Temp,'f',2,64) )
+		buffer.WriteString("\nLowest temperature: \n" + strconv.FormatFloat(w.Main.Temp_min,'f',2,64) )
+		buffer.WriteString("\nPeak temperature: \n" + strconv.FormatFloat(w.Main.Temp_max,'f',2,64) )
+
+
+
+		fmt.Println(buffer.String())
 
 	}
+	return buffer.String()
 }

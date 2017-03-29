@@ -7,6 +7,7 @@ import (
 	"log"
 	"fmt"
 
+	"strconv"
 )
 
 type IpSearch struct {
@@ -17,49 +18,29 @@ type IpSearch struct {
 	Reverse string
 	Mobile bool
 	Proxy bool
+	Lat float64
+	Lon float64
 
 
 
 }
 var w IpSearch
 func DecodeIpSearch(test []byte) string {
-	//fmt.Printf("q", test)
-	// Her brukes det kun et utdrag fra data som var i responsen fra OWL
-	// For å bruke strøm fra doGet funksjonen, må hele JSON-strukturen
-	// defineres; kun Coordinates og Additional (main) er definert i
-	// dette eksemplet
-	var buffer bytes.Buffer
-	// Definerer en struktur i Golang etter strukturen fra API-en (openweather)
-	// Her kan man virkelig se “styrken” av Golangs struct
-	// Datafelt i struct må være med en storbokstav og navn må tilsvare
-	// de navn som er i jsonStream (de kan begynne med små bokstaver)
 
-	// Ting er strøm-basert, som vi har snakket om tidligere
+	var buffer bytes.Buffer
+
+
+
 	dec := json.NewDecoder(bytes.NewReader(test))
 	for {
-		// Definerer struktur for en instans av Weather strukturen
-		// Dette avhenger selvfølgelig om hva som returneres fra
-		// webtjenesten (openweather i dette tilfelle)
-
-		//var m Additional
-		// Passerer adressen til Weather-strukturen w til funksjonen
-		// Decode (som kalles fra en json.NewDecoder med
-		// strings.NewReader(jsonStream) som IN-DATA-STRØM
-		// Når det ikke er mer data (EOF) bryter vi utførelsen av
-		// denne funksjonen med break
 		if err := dec.Decode(&w); err == io.EOF {
 			break
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		// Her er et par eksempler på hvordan man kan skrive ut
-		// data fra denne webtjenesten på en brukbar måte
-		// Dette er noe dere skal prøve å imitere med data
-		// fra andre webtjenester (med andre API-er, selvsagt)
-		buffer.WriteString("Information about your IP: " + w.Reverse)
 
-		//fmt.Printf("\n You are in country: %q \n More specific %q in %q \n Your ISP is: %q\n",
-			//w.Country, w.City, w.RegionName, w.Isp)
+		buffer.WriteString("Information about server IP: " + w.Reverse)
+
 		buffer.WriteString("\n You are in country: " + w.Country + "\n More specific " + w.City+ " in " + w.RegionName)
 		buffer.WriteString("\n Your ISP is: "+w.Isp)
 		if w.Mobile == true {
@@ -73,3 +54,27 @@ func DecodeIpSearch(test []byte) string {
 	}
 	return buffer.String()
 }
+func GetIpLatLng(test []byte) string {
+
+	var buffer2 bytes.Buffer
+
+
+
+	dec := json.NewDecoder(bytes.NewReader(test))
+	for {
+		if err := dec.Decode(&w); err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
+		}
+
+		buffer2.WriteString("location=" + strconv.FormatFloat(w.Lat,'f',7,64))
+		buffer2.WriteString("," + strconv.FormatFloat(w.Lon,'f',7,64))
+		buffer.WriteString("&timestamp=1458000000&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko")
+
+		fmt.Println(buffer2.String())
+
+	}
+	return buffer2.String()
+}
+

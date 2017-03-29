@@ -13,15 +13,24 @@ import (
 	"bytes"
 )
 //"Google" : "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+var Str struct{
+	OWL string
+	IPaddr string
+	Timezone string
+	LatLng string
+}
 
 //var URLS = make([]string, 3)
 var URLS = map[string]string{
 	"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
-	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1458000000&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
 	"IP" : "https://api.ipify.org?format=json",
-	"IpSearch" : "http://ip-api.com/json/" + IPaddr,
+	"IpSearch" : "http://ip-api.com/json/" + Str.IPaddr,
+	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1458000000&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+
+
 }
-var IPaddr string
+
+
 
 func main() {
 
@@ -80,6 +89,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			} else if key == "Gtimezone" {
 				i := URLS[key]
 				go doGet(i)
+				//doGet(fmt.Sprintf(i, Str.LatLng))
 			}
 		}
 	}
@@ -105,16 +115,17 @@ func doGet(url string) {
 		fmt.Println("response Body:", string(contents))
 		fmt.Printf("%q", contents)
 		if url == URLS["OWL"] {
-			go decoders.DecodeOWL(contents)
+			Str.OWL = decoders.DecodeOWL(contents)
+		}
+		if url == URLS["IP"] {
+			Str.IPaddr = decoders.DecodeIP(contents)
+		}
+		if url == URLS["IpSearch"] {
+			Str.LatLng = decoders.GetIpLatLng(contents)
+			go decoders.DecodeIpSearch(contents)
 		}
 		if url == URLS["Gtimezone"] {
 			go decoders.DecodeTimeZone(contents)
-		}
-		if url == URLS["IP"] {
-			IPaddr = decoders.DecodeIP(contents)
-		}
-		if url == URLS["IpSearch"] {
-			go decoders.DecodeIpSearch(contents)
 		}
 		//response.Header.Set("Content-Type", "application/json")
 		//go DecodeOWL(js)
