@@ -3,10 +3,10 @@
 
 </head>
 <body>
-<h2>Navn: {{.Name}}</h2>
-<p>Description: {{.Description}}</p>
-<p>Some other stuff: Serveren har vært oppe i: {{.Count}} sekunder</p>
-<p>Server IP : {{.ServerIP}}</p>
+<h2>Timezone: {{.Timezone}}</h2>
+<h3>Description: {{.Description}}</h3>
+<h4>Ip adresse: {{.IPaddr}} </h4>
+<h5>Lokasjonsdata: {{.LatLng}} </h5>
 <form action="/">
     Søk google maps.. <input type="text" name="place" placeholder="UIA kristiansand">
     <input type="submit" value="Søk!">

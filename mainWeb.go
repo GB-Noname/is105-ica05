@@ -93,6 +93,19 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	lp := path.Join("templates", "index.tmpl")
+	//vals := Str
+	t, pErr := template.ParseFiles(lp)
+	if pErr != nil {
+		panic(pErr)
+	}
+	pErr = t.Execute(w, Str)
+	if pErr != nil {
+		http.Error(w, pErr.Error(), http.StatusInternalServerError)
+
+	}
+
+
 }
 
 func doGet(url string) {
@@ -125,7 +138,7 @@ func doGet(url string) {
 			go decoders.DecodeIpSearch(contents)
 		}
 		if url == URLS["Gtimezone"] {
-			go decoders.DecodeTimeZone(contents)
+			Str.Timezone = decoders.DecodeTimeZone(contents)
 		}
 		//response.Header.Set("Content-Type", "application/json")
 		//go DecodeOWL(js)
