@@ -67,10 +67,8 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 		//for i := 0; i < len(URLS); i++ {
 		//go doGet(URLS)
 		for key := range URLS {
-			if key == "Google" {
-				i := URLS[key]
-				go getGoogle(i)
-			} else if key == "IP" {
+
+			if key == "IP" {
 				i := URLS[key]
 				go doGet(i)
 			} else if key == "IpSearch" {
