@@ -18,6 +18,14 @@ var Str struct{
 	IPaddr string
 	Timezone string
 	LatLng string
+	IpSearch string
+}
+var JStruct struct {
+	Jowl []byte
+	jIpaddr []byte
+	jTimeZone []byte
+	jLatLng []byte
+	jIpSearch []byte
 }
 
 //var URLS = make([]string, 3)
@@ -26,12 +34,8 @@ var URLS = map[string]string{
 	"IP" : "https://api.ipify.org?format=json",
 	"IpSearch" : "http://ip-api.com/json/" + Str.IPaddr,
 	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1458000000&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
-
-
 }
-
-
-
+var JPS []byte
 func main() {
 
 	//fmt.Println(IPaddr)
@@ -72,6 +76,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.Form) // print information on server side.
 	name := r.Form.Get("name")
 	fmt.Println(name)
+
 	if name == "all" {
 		//for i := 0; i < len(URLS); i++ {
 		//go doGet(URLS)
@@ -79,23 +84,30 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 
 			if key == "IP" {
 				i := URLS[key]
-				go doGet(i)
+				doGet(i)
+
 			} else if key == "IpSearch" {
 				i := URLS[key]
-				go doGet(i)
+				cont := doGet(i)
+				Str.IpSearch = decoders.DecodeIpSearch(cont)
 			} else if key == "OWL" {
 				i := URLS[key]
-				go doGet(i)
+				//go doGet(i)
+				cont := doGet(i)
+				Str.OWL = decoders.DecodeOWL(cont)
 			} else if key == "Gtimezone" {
 				i := URLS[key]
-				go doGet(i)
+				cont := doGet(i)
+				Str.Timezone = decoders.DecodeTimeZone(cont)
 				//doGet(fmt.Sprintf(i, Str.LatLng))
 			}
 		}
 	}
+	Str.IPaddr = decoders.DecodeIP(JPS)
+	fmt.Println(Str)
 	lp := path.Join("templates", "index.tmpl")
-	//vals := Str
-	t, pErr := template.ParseFiles(lp)
+	tp := path.Join("templates", "layout.html")
+	t, pErr := template.ParseFiles(lp, tp)
 	if pErr != nil {
 		panic(pErr)
 	}
@@ -105,10 +117,9 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-
 }
 
-func doGet(url string) {
+func doGet(url string) []byte {
 	response, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -128,22 +139,28 @@ func doGet(url string) {
 		fmt.Println("response Body:", string(contents))
 		fmt.Printf("%q", contents)
 		if url == URLS["OWL"] {
-			Str.OWL = decoders.DecodeOWL(contents)
+			return contents
+			//return contents
 		}
 		if url == URLS["IP"] {
-			Str.IPaddr = decoders.DecodeIP(contents)
+			//Str.IPaddr = decoders.DecodeIP(contents)
+			//return contents
+			JPS = contents
 		}
 		if url == URLS["IpSearch"] {
 			Str.LatLng = decoders.GetIpLatLng(contents)
-			go decoders.DecodeIpSearch(contents)
+			//go decoders.DecodeIpSearch(contents)
+			return contents
 		}
 		if url == URLS["Gtimezone"] {
-			Str.Timezone = decoders.DecodeTimeZone(contents)
+			//Str.Timezone = decoders.DecodeTimeZone(contents)
+			return contents
 		}
 		//response.Header.Set("Content-Type", "application/json")
 		//go DecodeOWL(js)
 	}
-
+	fmt.Println(Str)
+	return []byte{}
 }
 
 func getGoogle(url string) {

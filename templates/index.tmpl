@@ -3,10 +3,17 @@
 
 </head>
 <body>
-<h2>Timezone: {{.Timezone}}</h2>
-<h3>Description: {{.Description}}</h3>
 <h4>Ip adresse: {{.IPaddr}} </h4>
+<h1>IpSearch: {{.IPaddr}} {{.IpSearch}}</h1>
+<br>
+<h2>Timezone: {{.Timezone}}</h2>
+<br>
+<h3>OWL: {{.OWL}}</h3>
+<br>
+
+<br>
 <h5>Lokasjonsdata: {{.LatLng}} </h5>
+<br>
 <form action="/">
     Søk google maps.. <input type="text" name="place" placeholder="UIA kristiansand">
     <input type="submit" value="Søk!">
