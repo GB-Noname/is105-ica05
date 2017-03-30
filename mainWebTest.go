@@ -15,11 +15,18 @@ import (
 	"net"
 )
 
+var Str struct {
+	OWL     string
+	Google  string
+	Pokemon string
+}
+
 //var URLS = make([]string, 3)
 var URLS = map[string]string{
-	"OWL":     "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
+	//"OWL":     "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
+	"OWL":     "http://api.openweathermap.org/data/2.5/weather?zip=94040,us&units=metric&appid=a0a5cd928b34063b9443cfea27292270",
 	"Google":  "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
-	"Pokemon": "http://pokeapi.co/api/v2/pokemon/11/",
+	"Pokemon": "http://pokeapi.co/api/v2/pokemon/67/",
 }
 
 //var IPaddr string
@@ -115,6 +122,7 @@ func doGet(url string) {
 			fmt.Println(" ", key, ":", value)
 
 		}
+		fmt.Println("response Body:", string(contents))
 		fmt.Printf("%q", contents)
 
 		//response.Header.Set("Content-Type", "application/json")
@@ -122,9 +130,10 @@ func doGet(url string) {
 		//go DecodeOWL(js)
 
 		if url == URLS["OWL"] {
-			decoders.DecodeOWL(contents)
-		} else if url == URLS["Pokemon"] {
-			decoders.DecodePokemon(contents)
+			Str.OWL = decoders.DecodeOWL(contents)
+		}
+		if url == URLS["Pokemon"] {
+			Str.Pokemon = decoders.DecodePokemon(contents)
 		}
 	}
 }
