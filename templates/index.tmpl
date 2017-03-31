@@ -13,17 +13,15 @@
 
 <br>
 <h5>Lokasjonsdata: {{.LatLng}} </h5>
+<h5> Viser kartdata ut ifra hvor IP adresse er registrert</h5>
 <br>
-<form action="/">
-    Søk google maps.. <input type="text" name="place" placeholder="UIA kristiansand">
-    <input type="submit" value="Søk!">
-</form>
 <iframe
-        width="100%"
-        height="70%"
-        frameborder="0" style="border:0"
-        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDxwGLdsYA1zvYqq_HzkoaLNLnr7uE4OII
-            &q={{.MapData}}" allowfullscreen>
+       width="600"
+       height="450"
+       frameborder="0" style="border:0"
+       src="https://www.google.com/maps/embed/v1/view?zoom=16&center={{.LatLng}}&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko"
+       allowfullscreen>
+
 </iframe>
 </body>
 </html>

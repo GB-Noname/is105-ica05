@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 
 	"bytes"
+	"strings"
 )
 //"Google" : "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
 var Str struct{
@@ -19,6 +20,7 @@ var Str struct{
 	Timezone string
 	LatLng string
 	IpSearch string
+	MapData string
 }
 var JStruct struct {
 	Jowl []byte
@@ -27,13 +29,18 @@ var JStruct struct {
 	jLatLng []byte
 	jIpSearch []byte
 }
+var ipChan = make(chan []byte )
+var ipSeachChan = make(chan []byte)
+var timeZoneChan = make(chan []byte)
+var owlChan = make(chan []byte)
+var latLngChan = make(chan []byte)
 
 //var URLS = make([]string, 3)
 var URLS = map[string]string{
-	"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
 	"IP" : "https://api.ipify.org?format=json",
 	"IpSearch" : "http://ip-api.com/json/" + Str.IPaddr,
-	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1458000000&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1490978678&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+	"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
 }
 var JPS []byte
 func main() {
@@ -46,6 +53,7 @@ func main() {
 	http.HandleFunc("/", homepage)
 	http.HandleFunc("/search", searchBox)
 	http.HandleFunc("/AltSubmit", formInputHandler)
+	http.HandleFunc("/maps", maps)
 	//http.HandleFunc("/ttt", searchBox)
 	//http.HandleFunc("/ddd", searchBox)
 	//http.HandleFunc("/fff", searchBox)
@@ -81,29 +89,41 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 		//for i := 0; i < len(URLS); i++ {
 		//go doGet(URLS)
 		for key := range URLS {
+			//ipChan <- key
+			if key == "Gtimezone" {
+			i := URLS[key]
+			//go doGet(i)
+			go doGet(i)
 
-			if key == "IP" {
+			} else if key == "OWL" {
 				i := URLS[key]
-				doGet(i)
+				go doGet(i)
+			}else if key == "IP" {
+				i := URLS[key]
+				go doGet(i)
 
 			} else if key == "IpSearch" {
 				i := URLS[key]
-				cont := doGet(i)
-				Str.IpSearch = decoders.DecodeIpSearch(cont)
-			} else if key == "OWL" {
-				i := URLS[key]
-				//go doGet(i)
-				cont := doGet(i)
-				Str.OWL = decoders.DecodeOWL(cont)
-			} else if key == "Gtimezone" {
-				i := URLS[key]
-				cont := doGet(i)
-				Str.Timezone = decoders.DecodeTimeZone(cont)
+				go doGet(i)
+
+			}
+
 				//doGet(fmt.Sprintf(i, Str.LatLng))
 			}
-		}
+
 	}
-	Str.IPaddr = decoders.DecodeIP(JPS)
+
+	ip := <- ipChan
+	ipSearch := <- ipSeachChan
+	timeZ := <- timeZoneChan
+	owl := <- owlChan
+	latLng := <- latLngChan
+	Str.Timezone = decoders.DecodeTimeZone(timeZ)
+	Str.OWL = decoders.DecodeOWL(owl)
+	Str.LatLng = decoders.GetIpLatLng(latLng)
+	Str.IPaddr = decoders.DecodeIP(ip)
+	Str.IpSearch = decoders.DecodeIpSearch(ipSearch)
+
 	fmt.Println(Str)
 	lp := path.Join("templates", "index.tmpl")
 	tp := path.Join("templates", "layout.html")
@@ -119,7 +139,28 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func doGet(url string) []byte {
+func maps(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() //Parse url parameters passed, then parse the response packet for the POST body (request body)
+	// attention: If you do not call ParseForm method, the following data can not be obtained form
+	fmt.Println(r.Form) // print information on server side.
+	Str.MapData = r.Form.Get("place")
+	newplace := strings.Replace(Str.MapData, " ", "+", -1)
+	if len(newplace) <= 0 {Str.MapData = "UIA+Kristiansand"}
+
+	lp := path.Join("templates", "index.tmpl")
+	tp := path.Join("templates", "layout.html")
+	t, pErr := template.ParseFiles(lp, tp)
+	if pErr != nil {
+		panic(pErr)
+	}
+	pErr = t.Execute(w, Str)
+	if pErr != nil {
+		http.Error(w, pErr.Error(), http.StatusInternalServerError)
+
+	}
+}
+
+func doGet(url string) {
 	response, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -138,29 +179,38 @@ func doGet(url string) []byte {
 		}
 		fmt.Println("response Body:", string(contents))
 		fmt.Printf("%q", contents)
-		if url == URLS["OWL"] {
-			return contents
-			//return contents
+		if url == URLS["Gtimezone"] {
+			//Str.Timezone = decoders.DecodeTimeZone(contents)
+			//JStruct.jTimeZone = contents
+			timeZoneChan <- contents
 		}
+		if url == URLS["OWL"] {
+			//JStruct.Jowl = contents
+			//return contents
+			owlChan <- contents
+		}
+
 		if url == URLS["IP"] {
 			//Str.IPaddr = decoders.DecodeIP(contents)
 			//return contents
-			JPS = contents
+			//JStruct.jIpaddr = contents
+
+			ipChan <- contents
 		}
 		if url == URLS["IpSearch"] {
-			Str.LatLng = decoders.GetIpLatLng(contents)
+
+
 			//go decoders.DecodeIpSearch(contents)
-			return contents
+			//JStruct.jIpSearch =contents
+			ipSeachChan <- contents
+			latLngChan <- contents
+
 		}
-		if url == URLS["Gtimezone"] {
-			//Str.Timezone = decoders.DecodeTimeZone(contents)
-			return contents
-		}
+
 		//response.Header.Set("Content-Type", "application/json")
 		//go DecodeOWL(js)
 	}
-	fmt.Println(Str)
-	return []byte{}
+	fmt.Printf("Result %s", JStruct)
 }
 
 func getGoogle(url string) {

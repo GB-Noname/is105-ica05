@@ -58,7 +58,7 @@ func DecodeTimeZone(test []byte) string{
 		}
 
 
-		buffer.WriteString("Timezone information: " + w.Reverse)
+		buffer.WriteString("Timezone information: ")
 
 		//fmt.Printf("\n You are in country: %q \n More specific %q in %q \n Your ISP is: %q\n",
 		//w.Country, w.City, w.RegionName, w.Isp)
