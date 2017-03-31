@@ -1,6 +1,50 @@
 {{ define "title" }}An example layout{{ end }}
 
 {{ define "content" }}
-<h1>Hello {{ .Name }}</h1>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+<center>
+<h1>Press "Show Formatted JSON" to show the standard page</h1>
+<form name="loginForm" method="post" action="/FormattedJson">
+    ENTRY: <input type="text" name=""> <br/>
+    <input type="submit" name="Search" value="Show Formatted JSON" /></center>
+<br>
+</form>
+
+<form action="/AltSubmit" method="post">
+    <center><input type="submit" name="List" value="Show JSON raw format" />
+        <input type="submit" name="ShowProg" value="Show dynamic content only" />
+        <input type="submit" name="ShowCode" value="Show static content only" />
+    </center>
+</form>
+
+<center>
+    <br>
+    <div id="asd">
+        <form action="InputHandler" method="post">
+            Enter JSON URL <input type="text" name="JSON Link" />
+            Enter Enter all variables with & between <input type="text" name="Name" />
+            <br>
+            Enter API key if needed <input type="text" name="Section" />
+            Any additional ending for URL? <input type="number" name="Amount" min="0" step="1"/>
+            <br>
+            <input type="submit" name="AddIt" value="Submit request" />
+
+        </form>
+        <br>
+        <button onclick="asd(1)">Close without submitting</button>
+    </div>
+
+    <button onclick="asd(2)">Special request</button>
+
+    <script type="text/javascript">
+        function asd(a)
+        {
+            if(a===1)
+                document.getElementById("asd").style.display="none";
+            else
+                document.getElementById("asd").style.display="block";
+        }
+        window.onload = asd(1);
+    </script>
+</center>
+
 {{ end }}

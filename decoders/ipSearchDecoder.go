@@ -41,8 +41,8 @@ func DecodeIpSearch(test []byte) string {
 
 		buffer.WriteString("Information about server IP: " + w.Reverse)
 
-		buffer.WriteString("\n You are in country: " + w.Country + "\n More specific " + w.City+ " in " + w.RegionName)
-		buffer.WriteString("\n Your ISP is: "+w.Isp)
+		buffer.WriteString("\n Registered in country: " + w.Country + "\n More specific " + w.City+ " in " + w.RegionName)
+		buffer.WriteString("\n The ISP is: "+w.Isp)
 		if w.Mobile == true {
 			buffer.WriteString("You are on a mobile network")
 		}

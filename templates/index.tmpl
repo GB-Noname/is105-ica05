@@ -3,17 +3,19 @@
 
 </head>
 <body>
-<h4>Ip adresse: {{.IPaddr}} </h4>
-<h1>IpSearch: {{.IPaddr}} {{.IpSearch}}</h1>
+<center>
+<h4>Ip adress: {{.IPaddr}} </h4>
+<h1>Searching on IP: {{.IPaddr}} ...<br>
+    {{.IpSearch}}</h1>
 <br>
-<h2>Timezone: {{.Timezone}}</h2>
+<h2>Server Static: {{.Timezone}}</h2>
 <br>
-<h3>OWL: {{.OWL}}</h3>
+<h2>OWL: {{.OWL}}</h2>
 <br>
 
 <br>
-<h5>Lokasjonsdata: {{.LatLng}} </h5>
-<h5> Viser kartdata ut ifra hvor IP adresse er registrert</h5>
+<h2>Location data: {{.LatLng}} </h2>
+<h3> Showing map from where IP address is registered </h3>
 <br>
 <iframe
        width="600"
@@ -21,7 +23,7 @@
        frameborder="0" style="border:0"
        src="https://www.google.com/maps/embed/v1/view?zoom=16&center={{.LatLng}}&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko"
        allowfullscreen>
-
 </iframe>
+    </center>
 </body>
 </html>

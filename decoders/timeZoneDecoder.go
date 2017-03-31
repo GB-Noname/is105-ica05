@@ -62,7 +62,7 @@ func DecodeTimeZone(test []byte) string{
 
 		//fmt.Printf("\n You are in country: %q \n More specific %q in %q \n Your ISP is: %q\n",
 		//w.Country, w.City, w.RegionName, w.Isp)
-		buffer.WriteString("\n You are in the timezone: " + res.TimeZoneName + "\n" +
+		buffer.WriteString("\n Server is in the timezone: " + res.TimeZoneName + "\n" +
 		"With the TimeZoneId: " + res.TimeZoneID)
 		}
 		fmt.Println(buffer.String())

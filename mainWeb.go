@@ -22,13 +22,7 @@ var Str struct{
 	IpSearch string
 	MapData string
 }
-var JStruct struct {
-	Jowl []byte
-	jIpaddr []byte
-	jTimeZone []byte
-	jLatLng []byte
-	jIpSearch []byte
-}
+
 var ipChan = make(chan []byte )
 var ipSeachChan = make(chan []byte)
 var timeZoneChan = make(chan []byte)
@@ -36,13 +30,16 @@ var owlChan = make(chan []byte)
 var latLngChan = make(chan []byte)
 
 //var URLS = make([]string, 3)
+//"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=" + Str.LatLng + "&timestamp=1490978678&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+
 var URLS = map[string]string{
 	"IP" : "https://api.ipify.org?format=json",
 	"IpSearch" : "http://ip-api.com/json/" + Str.IPaddr,
-	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1490978678&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
 	"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
+	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1490978678&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+
 }
-var JPS []byte
+
 func main() {
 
 	//fmt.Println(IPaddr)
@@ -51,7 +48,7 @@ func main() {
 	//URLS[1] = "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1"
 	//URLS[2] = "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko"
 	http.HandleFunc("/", homepage)
-	http.HandleFunc("/search", searchBox)
+	http.HandleFunc("/FormattedJson", searchBox)
 	http.HandleFunc("/AltSubmit", formInputHandler)
 	http.HandleFunc("/maps", maps)
 	//http.HandleFunc("/ttt", searchBox)
@@ -65,7 +62,7 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 
 
 	lp := path.Join("templates", "layout.html")
-	fp := path.Join("templates", "indexTest.html")
+	fp := path.Join("templates", "index.html")
 
 	// Note that the layout file must be the first parameter in ParseFiles
 	tmpl, err := template.ParseFiles(lp, fp)
@@ -85,44 +82,43 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 	name := r.Form.Get("name")
 	fmt.Println(name)
 
-	if name == "all" {
+	if name == "" {
 		//for i := 0; i < len(URLS); i++ {
 		//go doGet(URLS)
 		for key := range URLS {
 			//ipChan <- key
-			if key == "Gtimezone" {
-			i := URLS[key]
-			//go doGet(i)
-			go doGet(i)
 
-			} else if key == "OWL" {
+			if key == "IP" {
 				i := URLS[key]
 				go doGet(i)
-			}else if key == "IP" {
-				i := URLS[key]
-				go doGet(i)
-
 			} else if key == "IpSearch" {
 				i := URLS[key]
 				go doGet(i)
 
-			}
+			} else if key == "Gtimezone" {
+				i := URLS[key]
+				//go doGet(i)
+				go doGet(i)
+			} else if key == "OWL" {
+				i := URLS[key]
+				go doGet(i)
 
 				//doGet(fmt.Sprintf(i, Str.LatLng))
 			}
-
+		}
 	}
 
 	ip := <- ipChan
 	ipSearch := <- ipSeachChan
+	latLng := <- latLngChan
 	timeZ := <- timeZoneChan
 	owl := <- owlChan
-	latLng := <- latLngChan
-	Str.Timezone = decoders.DecodeTimeZone(timeZ)
-	Str.OWL = decoders.DecodeOWL(owl)
-	Str.LatLng = decoders.GetIpLatLng(latLng)
+
 	Str.IPaddr = decoders.DecodeIP(ip)
 	Str.IpSearch = decoders.DecodeIpSearch(ipSearch)
+	Str.OWL = decoders.DecodeOWL(owl)
+	Str.LatLng = decoders.GetIpLatLng(latLng)
+	Str.Timezone = decoders.DecodeTimeZone(timeZ)
 
 	fmt.Println(Str)
 	lp := path.Join("templates", "index.tmpl")
@@ -161,6 +157,7 @@ func maps(w http.ResponseWriter, r *http.Request) {
 }
 
 func doGet(url string) {
+
 	response, err := http.Get(url)
 	if err != nil {
 		log.Fatal(err)
@@ -210,7 +207,7 @@ func doGet(url string) {
 		//response.Header.Set("Content-Type", "application/json")
 		//go DecodeOWL(js)
 	}
-	fmt.Printf("Result %s", JStruct)
+
 }
 
 func getGoogle(url string) {
