@@ -4,12 +4,10 @@ import (
 	"html/template"
 	"net/http"
 	"path"
-
 	"fmt"
 	"./decoders"
 	"log"
 	"io/ioutil"
-
 	"bytes"
 	"strings"
 	"math/rand"
@@ -35,7 +33,7 @@ var StrRand string
 /*
 Channels for handling the goroutines that initiate the GET function of http on the API url
  */
-var ipChan = make(chan []byte )
+var ipChan = make(chan []byte)
 var ipSeachChan = make(chan []byte)
 var timeZoneChan = make(chan []byte)
 var owlChan = make(chan []byte)
@@ -205,6 +203,10 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 				owl := <- owlChan
 				Str.OWL = decoders.DecodeOWL(owl)
 			}
+			if value == true && key == "Pokemon" {
+				pokemon := <- pokeChan
+				Str.Pokemon = decoders.DecodePokemon(pokemon)
+			}
 
 			fmt.Println(Str)
 			lp := path.Join("templates", "index.tmpl")
@@ -348,17 +350,18 @@ func formInputHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()  //Parse url parameters passed, then parse the response packet for the POST body (request body)
 	// attention: If you do not call ParseForm method, the following data can not be obtained form
 	fmt.Println(r.Form) // print information on server side.
-	for k := range r.Form {
-		if k == "List" {
-		fmt.Println("testetettetetetetet")
-			fmt.Println(k)
 
-	} else if k == "ShowProg" {
-			fmt.Println("ABABBABBABABABBA")
-			fmt.Println(k)
-	} else if k == "ShowCode" {
-			fmt.Println("This is code")
-			fmt.Println(k)
-		}
+	if r.Form.Get("IP;IpSearch;Pokemon") == "JSON_Raw" {
+			fmt.Println("check")
+
+			searchBox(w,r)
+
+	} else if r.Form.Get("Dynamic") == "Dynamic_Only" {
+		fmt.Println("ABABBABBABABABBA")
+
+	} else if r.Form.Get("RawFormat") == "ShowCode" {
+		fmt.Println("This is code")
+
 	}
+
 }
