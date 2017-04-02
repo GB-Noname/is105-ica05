@@ -12,7 +12,6 @@ import (
 	"./decoders"
 
 	"bytes"
-	"net"
 )
 
 var Str struct {
@@ -21,26 +20,29 @@ var Str struct {
 	Pokemon string
 }
 
+var owlChan = make(chan []byte)
+
+//var pokemonChan = make(chan []byte)
+
 //var URLS = make([]string, 3)
 var URLS = map[string]string{
 	//"OWL":     "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
-	"OWL":     "http://api.openweathermap.org/data/2.5/weather?zip=94040,us&units=metric&appid=a0a5cd928b34063b9443cfea27292270",
-	"Google":  "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
-	"Pokemon": "http://pokeapi.co/api/v2/pokemon/67/",
+	"OWL":    "http://api.openweathermap.org/data/2.5/weather?zip=94040,us&units=metric&appid=a0a5cd928b34063b9443cfea27292270",
+	"Google": "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+	//"Pokemon": "http://pokeapi.co/api/v2/pokemon/67/",
 }
 
 //var IPaddr string
-var IPaddr string
 
 func main() {
-	IPaddr = GetLocalIP()
-	fmt.Println(IPaddr)
+	//IPaddr = GetLocalIP()
+	//fmt.Println(IPaddr)
 	//http.HandleFunc("/search", search)
 	//URLS[0] = "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1"
 	//URLS[1] = "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1"
 	//URLS[2] = "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko"
 	http.HandleFunc("/", homepage)
-	http.HandleFunc("/search", searchBox)
+	http.HandleFunc("/FormattedJson", searchBox)
 	http.HandleFunc("/AltSubmit", formInputHandler)
 	//http.HandleFunc("/ttt", searchBox)
 	//http.HandleFunc("/ddd", searchBox)
@@ -48,26 +50,27 @@ func main() {
 	http.ListenAndServe(":8001", nil)
 	//go http.HandleFunc("/", searchBox)
 }
-func GetLocalIP() string {
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return ""
-	}
-	for _, address := range addrs {
-		// check the address type and if it is not a loopback the display it
-		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				return ipnet.IP.String()
-			}
-		}
-	}
-	return ""
-}
+
+//func GetLocalIP() string {
+//addrs, err := net.InterfaceAddrs()
+//if err != nil {
+//return ""
+//}
+//for _, address := range addrs {
+// check the address type and if it is not a loopback the display it
+//if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+//	if ipnet.IP.To4() != nil {
+//return ipnet.IP.String()
+//}
+//}
+//}
+//return ""
+//}
 
 func homepage(w http.ResponseWriter, r *http.Request) {
 
 	lp := path.Join("templates", "layout.html")
-	fp := path.Join("templates", "indexTest.html")
+	fp := path.Join("templates", "indextest.html")
 
 	// Note that the layout file must be the first parameter in ParseFiles
 	tmpl, err := template.ParseFiles(lp, fp)
@@ -103,6 +106,24 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+
+	owl := <-owlChan
+	//pokemon := <-pokemonChan
+
+	Str.OWL = decoders.DecodeOWL(owl)
+	//Str.Pokemon = decoders.DecodePokemon(pokemon)
+
+	fmt.Println(Str)
+	lp := path.Join("templates", "index.tmpl")
+	tp := path.Join("templates", "layout.html")
+	t, pErr := template.ParseFiles(lp, tp)
+	if pErr != nil {
+		panic(pErr)
+	}
+	pErr = t.Execute(w, Str)
+	if pErr != nil {
+		http.Error(w, pErr.Error(), http.StatusInternalServerError)
+	}
 }
 
 func doGet(url string) {
@@ -130,7 +151,8 @@ func doGet(url string) {
 		//go DecodeOWL(js)
 
 		if url == URLS["OWL"] {
-			Str.OWL = decoders.DecodeOWL(contents)
+			//Str.OWL = decoders.DecodeOWL(contents)
+			owlChan <- contents
 		}
 		if url == URLS["Pokemon"] {
 			Str.Pokemon = decoders.DecodePokemon(contents)
