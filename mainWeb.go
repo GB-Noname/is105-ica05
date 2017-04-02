@@ -41,11 +41,14 @@ var latLngChan = make(chan []byte)
 /*
 API url map. Searchable string identifiers for functionality in loops
  */
+//"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
+
+
 var URLS = map[string]string{
 	"IP" : "https://api.ipify.org?format=json",
 	"IpSearch" : "http://ip-api.com/json/" + Str.IPaddr,
-	"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
 	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1490978678&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+	"OWL": "http://api.openweathermap.org/data/2.5/weather?id=6453405&units=metric&appid=a0a5cd928b34063b9443cfea27292270",
 
 }
 
