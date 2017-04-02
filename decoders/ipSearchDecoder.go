@@ -10,6 +10,9 @@ import (
 	"strconv"
 )
 
+/*
+IpSearch holds the variables pointing to the JSON response
+ */
 type IpSearch struct {
 	Country string
 	RegionName string
@@ -25,6 +28,9 @@ type IpSearch struct {
 
 }
 var w IpSearch
+/*
+DecodeIpSearch decodes the JSON and return it in the form of a string
+ */
 func DecodeIpSearch(test []byte) string {
 
 	var buffer bytes.Buffer
@@ -54,6 +60,9 @@ func DecodeIpSearch(test []byte) string {
 	}
 	return buffer.String()
 }
+/*
+GetIpLatLng only decodes the latitude and longitude to return it in a single string
+ */
 func GetIpLatLng(test []byte) string {
 
 	var buffer2 bytes.Buffer

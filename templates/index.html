@@ -2,9 +2,16 @@
 
 {{ define "content" }}
 <center>
-<h1>Press "Show Formatted JSON" to show the standard page</h1>
+<h1>Press "Show Formatted JSON" without any text in INPUT to show the standard page <br>
+To get input only from specific API's enter the following options seperated with a semicolon <br>
+    Inputs listed as a valid input string: IP;IpSearch;OWL;Gtimezone<br>
+    IP returns the server IP address<br>
+    IpSearch returns additional information based on the IP address [IP required for this result]<br>
+    OWL returns static weather from Kristiansand<br>
+    Gtimezone returns static timezone information from Norway<br>
+</h1>
 <form name="loginForm" method="post" action="/FormattedJson">
-    ENTRY: <input type="text" name=""> <br/>
+    INPUT: <input type="text" name="input"> <br/>
     <input type="submit" name="Search" value="Show Formatted JSON" /></center>
 <br>
 </form>
