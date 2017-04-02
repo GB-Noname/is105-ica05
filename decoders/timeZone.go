@@ -24,7 +24,7 @@ func DecodeTimezone(test []byte) {
 
 	dec := json.NewDecoder(bytes.NewReader(test))
 	for {
-		var w LatLng
+		var w TimezoneRequest
 		if err := dec.Decode(&w); err == io.EOF {
 			break
 		} else if err != nil {
