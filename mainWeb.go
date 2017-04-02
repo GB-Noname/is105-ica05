@@ -12,6 +12,9 @@ import (
 
 	"bytes"
 	"strings"
+	"math/rand"
+	"strconv"
+	"time"
 )
 //"Google" : "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
 /*
@@ -24,7 +27,10 @@ var Str struct{
 	LatLng string
 	IpSearch string
 	MapData string
+	Pokemon string
+
 }
+var StrRand string
 
 /*
 Channels for handling the goroutines that initiate the GET function of http on the API url
@@ -34,6 +40,7 @@ var ipSeachChan = make(chan []byte)
 var timeZoneChan = make(chan []byte)
 var owlChan = make(chan []byte)
 var latLngChan = make(chan []byte)
+var pokeChan = make(chan []byte)
 
 //var URLS = make([]string, 3)
 //"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=" + Str.LatLng + "&timestamp=1490978678&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
@@ -43,19 +50,19 @@ API url map. Searchable string identifiers for functionality in loops
  */
 //"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
 
-
 var URLS = map[string]string{
 	"IP" : "https://api.ipify.org?format=json",
 	"IpSearch" : "http://ip-api.com/json/" + Str.IPaddr,
 	"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=58.1626388,7.9878993&timestamp=1490978678&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
 	"OWL": "http://api.openweathermap.org/data/2.5/weather?id=6453405&units=metric&appid=a0a5cd928b34063b9443cfea27292270",
-
+	"Pokemon": "http://pokeapi.co/api/v2/pokemon/42/",
 }
 
 /*
 main starts the application, handles HTTP requests and initiates the appropriate functions
  */
 func main() {
+
 
 	//fmt.Println(IPaddr)
 	//http.HandleFunc("/search", search)
@@ -98,6 +105,12 @@ searchbox handles text input, if blank it loops through the URLS map
 Further development needed for specifying each URL if it fits the input
  */
 func searchBox(w http.ResponseWriter, r *http.Request) {
+	r1 := rand.NewSource(time.Now().UnixNano())
+	rand := rand.New(r1)
+	StrRand = strconv.FormatInt(rand.Int63n(500),10) + "/"
+	fmt.Println(StrRand)
+	URLS["Pokemon"] = "http://pokeapi.co/api/v2/pokemon/" + StrRand
+	fmt.Println(URLS["Pokemon"])
 	r.ParseForm() //Parse url parameters passed, then parse the response packet for the POST body (request body)
 	// attention: If you do not call ParseForm method, the following data can not be obtained form
 	fmt.Println(r.Form) // print information on server side.
@@ -126,6 +139,9 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 				go getJSON(i)
 
 				//getJSON(fmt.Sprintf(i, Str.LatLng))
+			} else if key == "Pokemon" {
+				i := URLS[key]
+				go getJSON(i)
 			}
 
 		}
@@ -137,12 +153,14 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 		latLng := <- latLngChan
 		timeZ := <- timeZoneChan
 		owl := <- owlChan
+		pokemon := <- pokeChan
 
 		Str.IPaddr = decoders.DecodeIP(ip)
 		Str.IpSearch = decoders.DecodeIpSearch(ipSearch)
 		Str.OWL = decoders.DecodeOWL(owl)
 		Str.LatLng = decoders.GetIpLatLng(latLng)
 		Str.Timezone = decoders.DecodeTimeZone(timeZ)
+		Str.Pokemon = decoders.DecodePokemon(pokemon)
 
 		fmt.Println(Str)
 		lp := path.Join("templates", "index.tmpl")
@@ -278,6 +296,9 @@ func getJSON(url string) {
 			ipSeachChan <- contents
 			latLngChan <- contents
 
+		}
+		if url == URLS["Pokemon"]{
+			pokeChan <- contents
 		}
 
 		//response.Header.Set("Content-Type", "application/json")
