@@ -8,6 +8,7 @@ import (
 	"log"
 )
 
+//
 type TimezoneRequest struct {
 	Lng float64
 	Lat float64
@@ -24,16 +25,17 @@ func DecodeTimezone(test []byte) {
 
 	dec := json.NewDecoder(bytes.NewReader(test))
 	for {
-		var w TimezoneRequest
+		var w TimezoneResult
 		if err := dec.Decode(&w); err == io.EOF {
 			break
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		fmt.PrintF("\n Daylight savings-time in seconds: %.2f\n",
-			w.DstOffset)
-		fmt.Printf("Offset from UTC in seconds: %.2f", w.RawOffset)
-		fmt.Printf("Timezoneid: %q", w.TimeZoneID)
-		fmt.Printf("Timezonename: %q", w.TimeZoneName)
+		fmt.Println("Offset for daylight-savings in seconds:")
+		fmt.Println(w.DstOffset)
+		fmt.Println("Offset for UTC in seconds:")
+		fmt.Println(w.RawOffset)
+		fmt.Printf("Timezoneid: %v", w.TimeZoneID)
+		fmt.Printf("Timezonename: %v", w.TimeZoneName)
 	}
 }

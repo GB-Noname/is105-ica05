@@ -90,7 +90,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 				go doGet(i)
 			} else if key == "Timezone" {
 				i := URLS[key]
-				go getTimezone(i)
+				go doGet(i)
 			}
 
 		}
@@ -118,7 +118,7 @@ func doGet(url string) {
 
 		decoders.DecodeOWL(contents)
 		//response.Header.Set("Content-Type", "application/json")
-
+		decoders.DecodeTimezone(contents)
 		//go DecodeOWL(js)
 	}
 }
@@ -151,6 +151,7 @@ func getGoogle(url string) {
 	fmt.Printf("%q", body)
 
 	go decoders.GogleDecoder(body)
+
 }
 
 func formInputHandler(w http.ResponseWriter, r *http.Request) {
