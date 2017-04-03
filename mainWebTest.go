@@ -107,10 +107,10 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 	}
 
 	owl := <-owlChan
-	pokemon := <-pokemonChan
+	//pokemon := <-pokemonChan
 
 	Str.OWL = decoders.DecodeOWL(owl)
-	Str.Pokemon = decoders.DecodePokemon(pokemon)
+	//Str.Pokemon = decoders.DecodePokemon(pokemon)
 
 	fmt.Println(Str)
 	lp := path.Join("templates", "index.tmpl")
