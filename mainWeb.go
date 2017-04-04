@@ -62,6 +62,8 @@ func main() {
 	http.HandleFunc("/FormattedJson", searchBox)
 	http.HandleFunc("/AltSubmit", formInputHandler)
 	http.HandleFunc("/maps", maps)
+	
+	//Main listeneer
 	http.ListenAndServe(":8001", nil)
 }
 
