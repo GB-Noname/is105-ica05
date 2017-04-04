@@ -20,11 +20,10 @@ type Coordinates struct {
 Measurements holds the variables pointing to the temperature values in the JSON response
  */
 type Measurements struct {
-	Temp float64
-	Pressure float64
-	Humidity float64
-	Temp_min float64
-	Temp_max float64
+	Temp       float64
+	Pressure   float64
+	Humidity   float64
+	Speed      float64
 }
 /*
 Weather binds the two structs together
@@ -51,11 +50,11 @@ func DecodeOWL(test []byte) string{
 			log.Fatal(err)
 		}
 		buffer.WriteString("Live weather information about Kristiansand")
-		buffer.WriteString("\nCoordinates are: latitude " + strconv.FormatFloat(w.Coord.Lat,'f',7,64) )
+		buffer.WriteString("\nCoordinates for Kristiansand weather data are: latitude " + strconv.FormatFloat(w.Coord.Lat,'f',7,64) )
 		buffer.WriteString(" and longitude " + strconv.FormatFloat(w.Coord.Lon,'f',7,64) )
 		buffer.WriteString("\nTemperature: \n" + strconv.FormatFloat(w.Main.Temp,'f',2,64) )
-		buffer.WriteString("\nLowest temperature: \n" + strconv.FormatFloat(w.Main.Temp_min,'f',2,64) )
-		buffer.WriteString("\nPeak temperature: \n" + strconv.FormatFloat(w.Main.Temp_max,'f',2,64) )
+		buffer.WriteString("\n Humidity: \n" + strconv.FormatFloat(w.Main.Humidity,'f',2,64) )
+		buffer.WriteString("\n Pressure: \n" + strconv.FormatFloat(w.Main.Pressure,'f',2,64) )
 
 		fmt.Println(buffer.String())
 

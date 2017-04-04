@@ -40,13 +40,9 @@ var owlChan = make(chan []byte)
 var latLngChan = make(chan []byte)
 var pokeChan = make(chan []byte)
 
-//var URLS = make([]string, 3)
-//"Gtimezone" : "https://maps.googleapis.com/maps/api/timezone/json?location=" + Str.LatLng + "&timestamp=1490978678&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
-
 /*
 API url map. Searchable string identifiers for functionality in loops
  */
-//"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
 
 var URLS = map[string]string{
 	"IP" : "https://api.ipify.org?format=json",
@@ -62,20 +58,11 @@ main starts the application, handles HTTP requests and initiates the appropriate
 func main() {
 
 
-	//fmt.Println(IPaddr)
-	//http.HandleFunc("/search", search)
-	//URLS[0] = "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1"
-	//URLS[1] = "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1"
-	//URLS[2] = "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko"
 	http.HandleFunc("/", homepage)
 	http.HandleFunc("/FormattedJson", searchBox)
 	http.HandleFunc("/AltSubmit", formInputHandler)
 	http.HandleFunc("/maps", maps)
-	//http.HandleFunc("/ttt", searchBox)
-	//http.HandleFunc("/ddd", searchBox)
-	//http.HandleFunc("/fff", searchBox)
 	http.ListenAndServe(":8001", nil)
-	//go http.HandleFunc("/", searchBox)
 }
 
 /*
@@ -106,14 +93,14 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 	r1 := rand.NewSource(time.Now().UnixNano())
 	rand := rand.New(r1)
 	StrRand = strconv.FormatInt(rand.Int63n(500),10) + "/"
-	fmt.Println(StrRand)
+	//fmt.Println(StrRand)
 	URLS["Pokemon"] = "http://pokeapi.co/api/v2/pokemon/" + StrRand
-	fmt.Println(URLS["Pokemon"])
+	//fmt.Println(URLS["Pokemon"])
 	r.ParseForm() //Parse url parameters passed, then parse the response packet for the POST body (request body)
 	// attention: If you do not call ParseForm method, the following data can not be obtained form
-	fmt.Println(r.Form) // print information on server side.
+	//fmt.Println(r.Form) // print information on server side.
 	name := r.Form.Get("input")
-	fmt.Println(name)
+	//fmt.Println(name)
 
 	if name == "" {
 		//for i := 0; i < len(URLS); i++ {
@@ -160,7 +147,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 		Str.Timezone = decoders.DecodeTimeZone(timeZ)
 		Str.Pokemon = decoders.DecodePokemon(pokemon)
 
-		fmt.Println(Str)
+		//fmt.Println(Str)
 		lp := path.Join("templates", "index.tmpl")
 		tp := path.Join("templates", "layout.html")
 		t, pErr := template.ParseFiles(lp, tp)
@@ -201,9 +188,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			if value == true && key == "IP" {
 				ip := <- ipChan
 				Str.IPaddr = decoders.DecodeIP(ip)
-				//htmlBuffer.WriteString("<h1> Test </h1>")
 				ipTemp = path.Join("templates", "IP.tmpl")
-				//htmlBuffer.WriteString(string(ipTemp))
 			}
 			if value == true && key == "IpSearch" {
 				ipSearch := <- ipSeachChan
@@ -228,7 +213,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 				pokeTemp = path.Join("templates", "pokemon.tmpl")
 			}
 
-			fmt.Println(Str)
+			//fmt.Println(Str)
 
 			tp := path.Join("templates", "dynamicIndex.tmpl")
 
@@ -280,37 +265,27 @@ func getJSON(url string) {
 			log.Fatal(err)
 		}
 		fmt.Println("The calculated length is:", len(string(contents)), "for the url:", url)
-		fmt.Println(" ", response.StatusCode)
+		fmt.Println(" StatusCode ", response.StatusCode)
+		/*
 		hdr := response.Header
+
 		for key, value := range hdr {
 			fmt.Println(" ", key, ":", value,)
-
 		}
 		fmt.Println("response Body:", string(contents))
 		fmt.Printf("%q", contents)
+		*/
 		if url == URLS["Gtimezone"] {
-			//Str.Timezone = decoders.DecodeTimeZone(contents)
-			//JStruct.jTimeZone = contents
 			timeZoneChan <- contents
 		}
 		if url == URLS["OWL"] {
-			//JStruct.Jowl = contents
-			//return contents
 			owlChan <- contents
 		}
 
 		if url == URLS["IP"] {
-			//Str.IPaddr = decoders.DecodeIP(contents)
-			//return contents
-			//JStruct.jIpaddr = contents
-
 			ipChan <- contents
 		}
 		if url == URLS["IpSearch"] {
-
-
-			//go decoders.DecodeIpSearch(contents)
-			//JStruct.jIpSearch =contents
 			ipSeachChan <- contents
 			latLngChan <- contents
 
@@ -318,11 +293,7 @@ func getJSON(url string) {
 		if url == URLS["Pokemon"]{
 			pokeChan <- contents
 		}
-
-		//response.Header.Set("Content-Type", "application/json")
-		//go DecodeOWL(js)
 	}
-
 }
 
 func getGoogle(url string) {
