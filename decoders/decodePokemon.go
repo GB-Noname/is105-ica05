@@ -9,6 +9,9 @@ import (
 	"strconv"
 )
 
+/*
+Holds the variables for Pokemon JSON response decoding
+ */
 type Pokemon struct {
 	Id     float64
 	Name   string `json:"name"`
@@ -18,6 +21,9 @@ type Pokemon struct {
 
 var poke Pokemon
 
+/*
+Decodes and returns the pokemon information in form of a string
+ */
 func DecodePokemon(test []byte) string {
 
 	var buffer bytes.Buffer
