@@ -38,6 +38,7 @@ func DecodePokemon(test []byte) string {
 		//fmt.Printf("\n Pokemon: ID: %v, Name: %v, Height: %v, Weight: %v \n",
 		//w.Id, w.Name, w.Height, w.Weight)
 		fmt.Println(buffer.String())
+		fmt.Printf("%v", test)
 	}
 	return buffer.String()
 }
