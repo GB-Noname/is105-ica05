@@ -10,7 +10,7 @@ import (
 )
 
 
-func TestformInputHandler(t *testing.T) {
+func TestStatusHandle(t *testing.T) {
 
 
 	req, err := http.NewRequest("GET", "/satus", nil)
@@ -19,7 +19,7 @@ func TestformInputHandler(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	handler := http.HandleFunc(InputHandler)
+	handler := http.HandleFunc(StatusHandle)
 
 
 	handler.ServeHTTP(rr, req)
