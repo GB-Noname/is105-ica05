@@ -173,11 +173,22 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 
 		}
 	} else {
+		/*
+		Loads default template, so that if one of the variables are not called they just load default
+		if testers sets the template to correct when called if true.
+		 */
+		ipTemp := path.Join("templates", "dynamicIndex.tmpl")
+		ipsTemp := path.Join("templates", "dynamicIndex.tmpl")
+		timeTemp := path.Join("templates", "dynamicIndex.tmpl")
+		owlTemp := path.Join("templates", "dynamicIndex.tmpl")
+		pokeTemp := path.Join("templates", "dynamicIndex.tmpl")
+
+		/*
+		Splits the inputs with semicolon and itterates over the split string
+		 */
 		splitString := strings.Split(name, ";")
-		//tmpl := template.New("dynamic.tmpl")
-		//tmpl,tErr := tmpl.ParseFiles("./templates/dynamic.tmpl")
-		var htmlBuffer bytes.Buffer
-		htmlBuffer.WriteString("<html><head></head><body><center>")
+
+
 		setMap := make(map[string]bool)
 		for _, v := range splitString {
 			setMap[v] = true
@@ -187,52 +198,50 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 				i := URLS[key]
 				go getJSON(i)
 			}
-
 			if value == true && key == "IP" {
 				ip := <- ipChan
 				Str.IPaddr = decoders.DecodeIP(ip)
-				htmlBuffer.WriteString("<h1> Test </h1>")
+				//htmlBuffer.WriteString("<h1> Test </h1>")
+				ipTemp = path.Join("templates", "IP.tmpl")
+				//htmlBuffer.WriteString(string(ipTemp))
 			}
 			if value == true && key == "IpSearch" {
 				ipSearch := <- ipSeachChan
 				latLng := <- latLngChan
 				Str.IpSearch = decoders.DecodeIpSearch(ipSearch)
 				Str.LatLng = decoders.GetIpLatLng(latLng)
+				ipsTemp = path.Join("templates", "IpSearch.tmpl")
 			}
 			if value == true && key == "Gtimezone" {
 				timeZ := <- timeZoneChan
 				Str.Timezone = decoders.DecodeTimeZone(timeZ)
+				timeTemp = path.Join("templates", "timezone.tmpl")
 			}
 			if value == true && key == "OWL" {
 				owl := <- owlChan
 				Str.OWL = decoders.DecodeOWL(owl)
+				owlTemp = path.Join("templates", "owl.tmpl")
 			}
 			if value == true && key == "Pokemon" {
 				pokemon := <- pokeChan
 				Str.Pokemon = decoders.DecodePokemon(pokemon)
+				pokeTemp = path.Join("templates", "pokemon.tmpl")
 			}
 
 			fmt.Println(Str)
 
-			tp := path.Join("templates", "layout.html")
-			lp := path.Join("templates", "index.tmpl")
-			//tmp := path.Join("templates", "dynamic.tmpl")
+			tp := path.Join("templates", "dynamicIndex.tmpl")
 
-			t, pErr := template.ParseFiles(tp, lp)
+			t, pErr := template.ParseFiles(tp,ipTemp, ipsTemp, timeTemp, owlTemp, pokeTemp)
 			if pErr != nil {
 				panic(pErr)
 			}
 			pErr = t.Execute(w, Str)
 			if pErr != nil {
 				http.Error(w, pErr.Error(), http.StatusInternalServerError)
-
 			}
-
 		}
-
 	}
-
-
 }
 
 func maps(w http.ResponseWriter, r *http.Request) {
