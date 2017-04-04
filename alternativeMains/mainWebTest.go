@@ -6,10 +6,9 @@ import (
 	"path"
 
 	"fmt"
-	"io/ioutil"
+	"../decoders"
 	"log"
-
-	"./decoders"
+	"io/ioutil"
 
 	"bytes"
 	"net"
@@ -17,9 +16,9 @@ import (
 
 //var URLS = make([]string, 3)
 var URLS = map[string]string{
-	"OWL":      "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
-	"Google":   "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
-	"Timezone": "https://maps.googleapis.com/maps/api/timezone/json?location=38.908133,-77.047119&timestamp=1458000000&key=AIzaSyDn-UDB3kHZBgnD3wbC79UzkrXICejf3dc",
+	"OWL" : "http://samples.openweathermap.org/data/2.5/weather?zip=94040,us&appid=b1b15e88fa797225412429c1c50c122a1",
+	"Google" : "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+
 }
 var IPaddr string
 
@@ -88,9 +87,6 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			} else if key == "OWL" {
 				i := URLS[key]
 				go doGet(i)
-			} else if key == "Timezone" {
-				i := URLS[key]
-				go doGet(i)
 			}
 
 		}
@@ -111,14 +107,15 @@ func doGet(url string) {
 		fmt.Println(" ", response.StatusCode)
 		hdr := response.Header
 		for key, value := range hdr {
-			fmt.Println(" ", key, ":", value)
+			fmt.Println(" ", key, ":", value,)
 
 		}
 		fmt.Printf("%q", contents)
 
 		decoders.DecodeOWL(contents)
 		//response.Header.Set("Content-Type", "application/json")
-		decoders.DecodeTimezone(contents)
+
+
 		//go DecodeOWL(js)
 	}
 }
@@ -151,22 +148,23 @@ func getGoogle(url string) {
 	fmt.Printf("%q", body)
 
 	go decoders.GogleDecoder(body)
-
 }
 
+
+
 func formInputHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm() //Parse url parameters passed, then parse the response packet for the POST body (request body)
+	r.ParseForm()  //Parse url parameters passed, then parse the response packet for the POST body (request body)
 	// attention: If you do not call ParseForm method, the following data can not be obtained form
 	fmt.Println(r.Form) // print information on server side.
 	for k := range r.Form {
 		if k == "List" {
-			fmt.Println("testetettetetetetet")
+		fmt.Println("testetettetetetetet")
 			fmt.Println(k)
 
-		} else if k == "ShowProg" {
+	} else if k == "ShowProg" {
 			fmt.Println("ABABBABBABABABBA")
 			fmt.Println(k)
-		} else if k == "ShowCode" {
+	} else if k == "ShowCode" {
 			fmt.Println("This is code")
 			fmt.Println(k)
 		}

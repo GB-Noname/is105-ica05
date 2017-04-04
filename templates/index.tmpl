@@ -1,0 +1,29 @@
+<html>
+<head>
+
+</head>
+<body>
+<center>
+<h4>Ip adress: {{.IPaddr}} </h4>
+<h1>Searching on IP: {{.IPaddr}} ...<br>
+    {{.IpSearch}}</h1>
+<br>
+<h2>Server Static: {{.Timezone}}</h2>
+<br>
+<h2>OWL: {{.OWL}}</h2>
+<br>
+<h2>It's Dangerous to Go Alone! Take This: {{.Pokemon}}</h2>
+<br>
+<h2>Location data: {{.LatLng}} </h2>
+<h3> Showing map from where IP address is registered </h3>
+<br>
+<iframe
+       width="600"
+       height="450"
+       frameborder="0" style="border:0"
+       src="https://www.google.com/maps/embed/v1/view?zoom=16&center={{.LatLng}}&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko"
+       allowfullscreen>
+</iframe>
+    </center>
+</body>
+</html>
