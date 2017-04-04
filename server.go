@@ -4,7 +4,7 @@
 // Du kan ha tilgang til server fra nettleser med
 // 			http://localhost:3000
 //
-package main
+package mainWeb
 
 import (
 	"net/http"
