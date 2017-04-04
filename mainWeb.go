@@ -8,7 +8,6 @@ import (
 	"./decoders"
 	"log"
 	"io/ioutil"
-	"bytes"
 	"strings"
 	"math/rand"
 	"strconv"
@@ -33,12 +32,13 @@ var StrRand string
 /*
 Channels for handling the goroutines that initiate the GET function of http on the API url
  */
-var ipChan = make(chan []byte)
-var ipSeachChan = make(chan []byte)
-var timeZoneChan = make(chan []byte)
-var owlChan = make(chan []byte)
-var latLngChan = make(chan []byte)
-var pokeChan = make(chan []byte)
+var ipChan chan []byte
+var ipSeachChan chan []byte
+var timeZoneChan chan []byte
+var owlChan chan []byte
+var latLngChan chan []byte
+var pokeChan chan []byte
+
 
 /*
 API url map. Searchable string identifiers for functionality in loops
@@ -60,11 +60,43 @@ func main() {
 
 	http.HandleFunc("/", homepage)
 	http.HandleFunc("/FormattedJson", searchBox)
-	http.HandleFunc("/AltSubmit", formInputHandler)
-	http.HandleFunc("/maps", maps)
 	
 	//Main listeneer
 	http.ListenAndServe(":8001", nil)
+
+}
+/*
+Func for making the chans
+ */
+func makeChans() {
+	 ipChan = make(chan []byte)
+	 ipSeachChan = make(chan []byte)
+	 timeZoneChan = make(chan []byte)
+	 owlChan = make(chan []byte)
+	 latLngChan = make(chan []byte)
+	 pokeChan = make(chan []byte)
+}
+/*
+func for closing the chans
+ */
+func closeChans() {
+	close(timeZoneChan)
+	close(owlChan)
+	close(ipChan)
+	close(ipSeachChan)
+	close(pokeChan)
+}
+/*
+func for clearing the struct
+ */
+func clearStruct() {
+	Str.OWL = ""
+	Str.IPaddr = ""
+	Str.Timezone = ""
+	Str.LatLng = ""
+	Str.IpSearch = ""
+	Str.MapData =""
+	Str.Pokemon = ""
 }
 
 /*
@@ -92,6 +124,7 @@ searchbox handles text input, if blank it loops through the URLS map
 Further development needed for specifying each URL if it fits the input
  */
 func searchBox(w http.ResponseWriter, r *http.Request) {
+	makeChans()
 	r1 := rand.NewSource(time.Now().UnixNano())
 	rand := rand.New(r1)
 	StrRand = strconv.FormatInt(rand.Int63n(500),10) + "/"
@@ -116,7 +149,6 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			} else if key == "IpSearch" {
 				i := URLS[key]
 				go getJSON(i)
-
 			} else if key == "Gtimezone" {
 				i := URLS[key]
 				//go getJSON(i)
@@ -124,7 +156,6 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			} else if key == "OWL" {
 				i := URLS[key]
 				go getJSON(i)
-
 				//getJSON(fmt.Sprintf(i, Str.LatLng))
 			} else if key == "Pokemon" {
 				i := URLS[key]
@@ -161,6 +192,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, pErr.Error(), http.StatusInternalServerError)
 
 		}
+
 	} else {
 		/*
 		Loads default template, so that if one of the variables are not called they just load default
@@ -229,27 +261,10 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-}
+	closeChans()
+	clearStruct()
 
-func maps(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm() //Parse url parameters passed, then parse the response packet for the POST body (request body)
-	// attention: If you do not call ParseForm method, the following data can not be obtained form
-	fmt.Println(r.Form) // print information on server side.
-	Str.MapData = r.Form.Get("place")
-	newplace := strings.Replace(Str.MapData, " ", "+", -1)
-	if len(newplace) <= 0 {Str.MapData = "UIA+Kristiansand"}
 
-	lp := path.Join("templates", "index.tmpl")
-	tp := path.Join("templates", "layout.html")
-	t, pErr := template.ParseFiles(lp, tp)
-	if pErr != nil {
-		panic(pErr)
-	}
-	pErr = t.Execute(w, Str)
-	if pErr != nil {
-		http.Error(w, pErr.Error(), http.StatusInternalServerError)
-
-	}
 }
 
 /*
@@ -261,11 +276,12 @@ func getJSON(url string) {
 	if err != nil {
 		log.Fatal(err)
 	} else {
-		defer response.Body.Close()
+
 		contents, err := ioutil.ReadAll(response.Body)
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer response.Body.Close()
 		fmt.Println("The calculated length is:", len(string(contents)), "for the url:", url)
 		fmt.Println(" StatusCode ", response.StatusCode)
 		/*
@@ -277,80 +293,21 @@ func getJSON(url string) {
 		fmt.Println("response Body:", string(contents))
 		fmt.Printf("%q", contents)
 		*/
-		if url == URLS["Gtimezone"] {
-			timeZoneChan <- contents
-		}
-		if url == URLS["OWL"] {
-			owlChan <- contents
-		}
-
 		if url == URLS["IP"] {
 			ipChan <- contents
 		}
 		if url == URLS["IpSearch"] {
 			ipSeachChan <- contents
 			latLngChan <- contents
-
+		}
+		if url == URLS["Gtimezone"] {
+			timeZoneChan <- contents
+		}
+		if url == URLS["OWL"] {
+			owlChan <- contents
 		}
 		if url == URLS["Pokemon"]{
 			pokeChan <- contents
 		}
 	}
-}
-
-func getGoogle(url string) {
-	//response, err := http.Get(url)
-
-	// handle err
-	var jsonStr = []byte(`{
-  "macAddress": "00:25:9c:cf:1c:ac",
-  "signalStrength": -43,
-  "age": 0,
-  "channel": 11,
-  "signalToNoiseRatio": 0
-}`)
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
-	//req.Header.Set("X-Custom-Header", "myvalue")
-	//req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	fmt.Println("response Status:", resp.Status)
-	fmt.Println("response Headers:", resp.Header)
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
-	fmt.Printf("%q", body)
-
-
-	go decoders.GogleDecoder(body)
-}
-
-
-/*
-Concept for handling multiple input buttons
-###Only concept, not working. Further development needed###
- */
-func formInputHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()  //Parse url parameters passed, then parse the response packet for the POST body (request body)
-	// attention: If you do not call ParseForm method, the following data can not be obtained form
-	fmt.Println(r.Form) // print information on server side.
-
-	if r.Form.Get("IP;IpSearch;Pokemon") == "JSON_Raw" {
-			fmt.Println("check")
-
-			searchBox(w,r)
-
-	} else if r.Form.Get("Dynamic") == "Dynamic_Only" {
-		fmt.Println("ABABBABBABABABBA")
-
-	} else if r.Form.Get("RawFormat") == "ShowCode" {
-		fmt.Println("This is code")
-
-	}
-
 }
