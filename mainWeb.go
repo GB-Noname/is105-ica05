@@ -174,7 +174,10 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		splitString := strings.Split(name, ";")
-
+		//tmpl := template.New("dynamic.tmpl")
+		//tmpl,tErr := tmpl.ParseFiles("./templates/dynamic.tmpl")
+		var htmlBuffer bytes.Buffer
+		htmlBuffer.WriteString("<html><head></head><body><center>")
 		setMap := make(map[string]bool)
 		for _, v := range splitString {
 			setMap[v] = true
@@ -188,6 +191,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			if value == true && key == "IP" {
 				ip := <- ipChan
 				Str.IPaddr = decoders.DecodeIP(ip)
+				htmlBuffer.WriteString("<h1> Test </h1>")
 			}
 			if value == true && key == "IpSearch" {
 				ipSearch := <- ipSeachChan
@@ -209,9 +213,12 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			}
 
 			fmt.Println(Str)
-			lp := path.Join("templates", "index.tmpl")
+
 			tp := path.Join("templates", "layout.html")
-			t, pErr := template.ParseFiles(lp, tp)
+			lp := path.Join("templates", "index.tmpl")
+			//tmp := path.Join("templates", "dynamic.tmpl")
+
+			t, pErr := template.ParseFiles(tp, lp)
 			if pErr != nil {
 				panic(pErr)
 			}
