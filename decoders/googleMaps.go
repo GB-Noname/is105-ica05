@@ -7,49 +7,19 @@ import (
 	"log"
 	"fmt"
 
+
 )
 
-type Location struct {
-	Lng float64
-	Lat float64
-}
-
-type Maps struct {
-	Loc Location
-}
-
-// GeocodingResult is a single geocoded address
 type GeocodingResult struct {
-	AddressComponents []AddressComponent `json:"address_components"`
-	FormattedAddress  string             `json:"formatted_address"`
-	Geometry          AddressGeometry    `json:"geometry"`
-	Types             []string           `json:"types"`
-	PlaceID           string             `json:"place_id"`
-}
-
-// AddressComponent is a part of an address
-type AddressComponent struct {
-	LongName  string   `json:"long_name"`
-	ShortName string   `json:"short_name"`
-	Types     []string `json:"types"`
-}
-
-// AddressGeometry is the location of a an address
-type AddressGeometry struct {
-	Location     LatLng       `json:"location"`
-	LocationType string       `json:"location_type"`
-	Types        []string     `json:"types"`
-}
-type LatLng struct {
-	Lat float64 `json:"lat"`
-	Lng float64 `json:"lng"`
+	Lat float64
+	Lng float64
 }
 
 func GogleDecoder(test []byte) {
 	//fmt.Printf("q", test)
 	// Her brukes det kun et utdrag fra data som var i responsen fra OWL
 	// For å bruke strøm fra doGet funksjonen, må hele JSON-strukturen
-	// defineres; kun Coordinates og Measurements (main) er definert i
+	// defineres; kun Coordinates og Additional (main) er definert i
 	// dette eksemplet
 
 	// Definerer en struktur i Golang etter strukturen fra API-en (openweather)
@@ -63,8 +33,8 @@ func GogleDecoder(test []byte) {
 		// Definerer struktur for en instans av Weather strukturen
 		// Dette avhenger selvfølgelig om hva som returneres fra
 		// webtjenesten (openweather i dette tilfelle)
-		var w LatLng
-		//var m Measurements
+		var w GeocodingResult
+		//var m Additional
 		// Passerer adressen til Weather-strukturen w til funksjonen
 		// Decode (som kalles fra en json.NewDecoder med
 		// strings.NewReader(jsonStream) som IN-DATA-STRØM
@@ -79,8 +49,7 @@ func GogleDecoder(test []byte) {
 		// data fra denne webtjenesten på en brukbar måte
 		// Dette er noe dere skal prøve å imitere med data
 		// fra andre webtjenester (med andre API-er, selvsagt)
-		fmt.Printf("\n Coordinates are: longitude %.2f and latitude %.2f\n",
-			w.Lat, w.Lng)
+		fmt.Printf("\n Coordinates are: longitude %v and latitude %v\n", w.Lat, w.Lng)
 
 
 
