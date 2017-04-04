@@ -23,12 +23,12 @@ type TimezoneResult struct {
 	TimeZoneName string `json:"timeZoneName"`
 }
 
-var buffer bytes.Buffer
+
 /*
 Decodes the TimeZone response and return it as a string
  */
 func DecodeTimeZone(test []byte) string{
-
+	var buffer bytes.Buffer
 	dec := json.NewDecoder(bytes.NewReader(test))
 	fmt.Println(dec)
 	for {
