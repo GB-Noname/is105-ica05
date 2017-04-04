@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func main() {
+func main2() {
 	http.HandleFunc("/", foo)
 	http.ListenAndServe(":8001", nil)
 }

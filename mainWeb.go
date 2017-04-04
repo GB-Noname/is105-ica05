@@ -301,6 +301,7 @@ func getJSON(url string) {
 		}
 		if url == URLS["Pokemon"]{
 			pokeChan <- contents
+			return
 		}
 
 		//response.Header.Set("Content-Type", "application/json")
