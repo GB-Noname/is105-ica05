@@ -1,0 +1,10 @@
+<form action="/maps">
+    Søk google maps.. <input type="text" name="place" placeholder="UIA kristiansand">
+    <input type="submit" value="Søk!">
+</form>
+        src="https://maps.googleapis.com/maps/api/staticmap?center=Australia&size=640x400&style=element:labels|visibility:off&style=element:geometry.stroke|visibility:off&style=feature:landscape|element:geometry|saturation:-100&style=feature:water|saturation:-100|invert_lightness:true&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko">
+width="100%"
+        height="70%"
+        frameborder="0" style="border:0"
+        src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko
+                    &q={{.MapData}}" allowfullscreen>
