@@ -15,7 +15,7 @@ type IP struct {
 }
 
 func TestDecodePokemon(t *testing.T) {
-
+	makeChans()
 	go getJSON(URLS["Pokemon"])
 
 	annet := <- pokeChan
@@ -79,4 +79,6 @@ func TestMultiple(t *testing.T) {
 	if actual < expected{
 		t.Errorf("Test failed, expected, longer string!")
 	}
+	closeChans()
+
 }
