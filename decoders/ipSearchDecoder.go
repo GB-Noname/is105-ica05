@@ -79,7 +79,6 @@ func GetIpLatLng(test []byte) string {
 
 		buffer2.WriteString(strconv.FormatFloat(w.Lat,'f',7,64))
 		buffer2.WriteString("," + strconv.FormatFloat(w.Lon,'f',7,64))
-		//buffer.WriteString("&timestamp=1458000000&key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko")
 
 		fmt.Println(buffer2.String())
 

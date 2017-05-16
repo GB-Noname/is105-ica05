@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"time"
 )
-//"Google" : "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyDhdQvs9XLKd7TVYyYX98WWfB1z4VOddko",
+
 /*
 Str holds the returned strings from the JSON decoder functions
  */
@@ -120,8 +120,7 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
-searchbox handles text input, if blank it loops through the URLS map
-Further development needed for specifying each URL if it fits the input
+Searchbox handles text input, if blank it loops through the URLS map
  */
 func searchBox(w http.ResponseWriter, r *http.Request) {
 	makeChans()
@@ -138,8 +137,7 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(name)
 
 	if name == "" {
-		//for i := 0; i < len(URLS); i++ {
-		//go getJSON(URLS)
+
 		for key := range URLS {
 			//ipChan <- key
 
@@ -156,7 +154,6 @@ func searchBox(w http.ResponseWriter, r *http.Request) {
 			} else if key == "OWL" {
 				i := URLS[key]
 				go getJSON(i)
-				//getJSON(fmt.Sprintf(i, Str.LatLng))
 			} else if key == "Pokemon" {
 				i := URLS[key]
 				go getJSON(i)
@@ -284,15 +281,7 @@ func getJSON(url string) {
 		defer response.Body.Close()
 		fmt.Println("The calculated length is:", len(string(contents)), "for the url:", url)
 		fmt.Println(" StatusCode ", response.StatusCode)
-		/*
-		hdr := response.Header
 
-		for key, value := range hdr {
-			fmt.Println(" ", key, ":", value,)
-		}
-		fmt.Println("response Body:", string(contents))
-		fmt.Printf("%q", contents)
-		*/
 		if url == URLS["IP"] {
 			ipChan <- contents
 		}

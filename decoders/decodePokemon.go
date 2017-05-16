@@ -41,8 +41,7 @@ func DecodePokemon(test []byte) string {
 		buffer.WriteString("\n Pokemon Name: " + poke.Name)
 		buffer.WriteString("\n Height:" + strconv.FormatFloat(poke.Height, 'f', 0, 64))
 		buffer.WriteString("\n Weight:" + strconv.FormatFloat(poke.Weight, 'f', 0, 64))
-		//fmt.Printf("\n Pokemon: ID: %v, Name: %v, Height: %v, Weight: %v \n",
-		//w.Id, w.Name, w.Height, w.Weight)
+
 		fmt.Println(buffer.String())
 	}
 	return buffer.String()
