@@ -17,4 +17,4 @@ https://github.com/GB-Noname/is105-ica05
 testCollection_test.go
 
 ### Kode-Kommentarer
-All kode er kommentert i source filer
+All kode er kommentert i source filer for gjennomsyn
